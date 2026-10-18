@@ -1,0 +1,27 @@
+<view class="login-container">
+  <view class="logo">
+    <view class="logo-icon">🥣</view>
+    <view class="logo-title">光盘行动</view>
+    <view class="logo-sub">餐食打卡积分系统</view>
+  </view>
+
+  <view class="form card">
+    <block wx:if="{{mode === 'login'}}">
+      <input class="input" placeholder="用户名" value="{{username}}" data-field="username" bindinput="onInput" />
+      <input class="input" placeholder="密码" password value="{{password}}" data-field="password" bindinput="onInput" />
+    </block>
+    <block wx:else>
+      <input class="input" placeholder="用户名" value="{{username}}" data-field="username" bindinput="onInput" />
+      <input class="input" placeholder="密码(至少6位)" password value="{{password}}" data-field="password" bindinput="onInput" />
+      <input class="input" placeholder="昵称" value="{{nickname}}" data-field="nickname" bindinput="onInput" />
+      <input class="input" placeholder="学号" value="{{studentNo}}" data-field="studentNo" bindinput="onInput" />
+      <input class="input" placeholder="班级" value="{{className}}" data-field="className" bindinput="onInput" />
+      <input class="input" placeholder="宿舍" value="{{dormitory}}" data-field="dormitory" bindinput="onInput" />
+    </block>
+
+    <button class="btn-primary login-btn" bindtap="submit">{{mode === 'login' ? '登录' : '注册'}}</button>
+    <view class="switch" bindtap="switchMode">{{mode === 'login' ? '没有账号？去注册' : '已有账号？去登录'}}</view>
+  </view>
+
+  <view class="hint">测试账号：student1 / 123456</view>
+</view>

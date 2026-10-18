@@ -1,0 +1,43 @@
+.tip {
+  background: #e8f5e9;
+  color: #43a047;
+  font-size: 26rpx;
+}
+
+.recipe-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.recipe-desc {
+  font-size: 26rpx;
+  color: #757575;
+  margin-bottom: 16rpx;
+}
+
+.recipe-dishes {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 16rpx;
+}
+
+.dish-tag {
+  background: #fff3e0;
+  color: #fb8c00;
+  font-size: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 8rpx;
+  margin: 0 12rpx 12rpx 0;
+}
+
+.recipe-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.save-points {
+  font-size: 24rpx;
+  color: #43a047;
+}

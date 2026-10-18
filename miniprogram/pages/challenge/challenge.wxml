@@ -1,0 +1,17 @@
+<view class="container">
+  <view wx:if="{{challenges.length === 0}}" class="empty">暂无挑战活动</view>
+
+  <view wx:for="{{challenges}}" wx:key="id" class="card challenge-item">
+    <view class="challenge-head">
+      <text class="tag {{item.type === 'personal' ? 'tag-green' : item.type === 'class' ? 'tag-blue' : 'tag-orange'}}">{{typeText(item.type)}}挑战</text>
+      <text class="challenge-status {{item.status === 'ongoing' ? 'status-on' : ''}}">{{statusText(item.status)}}</text>
+    </view>
+    <view class="challenge-title">{{item.title}}</view>
+    <view class="challenge-desc">{{item.description}}</view>
+    <view class="challenge-time">📅 {{item.startDate}} ~ {{item.endDate}}</view>
+    <view class="challenge-actions">
+      <button class="join-btn" bindtap="join" data-id="{{item.id}}" disabled="{{item.status !== 'ongoing'}}">报名</button>
+      <button class="rank-btn" bindtap="goRanking" data-id="{{item.id}}">查看榜单</button>
+    </view>
+  </view>
+</view>

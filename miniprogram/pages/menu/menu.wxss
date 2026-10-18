@@ -1,0 +1,73 @@
+.meal-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.meal-tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  color: #757575;
+}
+
+.meal-tab.active {
+  background: #43a047;
+  color: #fff;
+  font-weight: 600;
+}
+
+.date-tip {
+  color: #9e9e9e;
+  font-size: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.cat-block {
+  margin-bottom: 20rpx;
+}
+
+.cat-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+  padding-left: 8rpx;
+}
+
+.dish-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.dish-card {
+  width: 48.5%;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.dish-img {
+  width: 100%;
+  height: 220rpx;
+  display: block;
+  background: #f0f0f0;
+}
+
+.dish-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  padding: 14rpx 16rpx 4rpx;
+}
+
+.dish-price {
+  font-size: 26rpx;
+  color: #fb8c00;
+  font-weight: 600;
+  padding: 0 16rpx 14rpx;
+}

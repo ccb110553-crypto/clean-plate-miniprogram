@@ -1,0 +1,67 @@
+<view class="container">
+  <!-- 顶部积分卡片 -->
+  <view class="hero">
+    <view class="hero-info">
+      <view class="hero-name">{{userInfo.nickname || userInfo.username}}</view>
+      <view class="hero-class" wx:if="{{userInfo.className}}">{{userInfo.className}} · {{userInfo.dormitory}}</view>
+    </view>
+    <view class="hero-points">
+      <view class="points-num">{{points.balancePoints}}</view>
+      <view class="points-label">当前积分</view>
+    </view>
+  </view>
+
+  <!-- 今日打卡状态 -->
+  <view class="card">
+    <view class="card-title">今日光盘打卡</view>
+    <block wx:if="{{todayStatus}}">
+      <view class="today-status">
+        <text class="tag {{todayStatus.status === 'approved' ? 'tag-green' : todayStatus.status === 'rejected' ? 'tag-red' : 'tag-orange'}}">{{statusText(todayStatus.status)}}</text>
+        <text wx:if="{{todayStatus.status === 'rejected'}}" class="reject-reason">{{todayStatus.rejectReason}}</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="today-empty">今天还没有打卡，用餐后记得拍照光盘哦～</view>
+    </block>
+    <button class="btn-primary" bindtap="goCheckin" disabled="{{todayStatus !== null}}">
+      {{todayStatus ? '今日已打卡' : '去打卡 +10积分'}}
+    </button>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="grid">
+    <view class="grid-item" bindtap="goRecords">
+      <view class="grid-icon">📋</view>
+      <view class="grid-text">打卡记录</view>
+    </view>
+    <view class="grid-item" bindtap="goShop">
+      <view class="grid-icon">🎁</view>
+      <view class="grid-text">积分商城</view>
+    </view>
+    <view class="grid-item" bindtap="goChallenge">
+      <view class="grid-icon">🏆</view>
+      <view class="grid-text">光盘挑战</view>
+    </view>
+    <view class="grid-item" bindtap="goRecipe">
+      <view class="grid-icon">🥗</view>
+      <view class="grid-text">食谱推荐</view>
+    </view>
+  </view>
+
+  <!-- 今日菜单 -->
+  <view class="card">
+    <view class="card-title">今日菜单 <text class="more" bindtap="goMenu">全部 ›</text></view>
+    <view wx:if="{{menus.length === 0}}" class="empty">暂无菜单数据</view>
+    <view wx:for="{{menus}}" wx:key="id" class="menu-item" bindtap="preview" data-url="{{item.image}}">
+      <image src="{{item.image}}" mode="aspectFill" class="menu-img" />
+      <view class="menu-info">
+        <view class="menu-name">
+          {{item.dishName}}
+          <text wx:if="{{item.isSmall === 1}}" class="tag tag-blue">小份</text>
+        </view>
+        <view class="menu-cat">{{item.category}}</view>
+      </view>
+      <view class="menu-price">¥{{item.price}}</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,61 @@
+.rank-header {
+  text-align: center;
+}
+
+.rank-title {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.rank-sub {
+  font-size: 24rpx;
+  color: #9e9e9e;
+  margin-top: 8rpx;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+}
+
+.top3 {
+  border: 2rpx solid #ffe0b2;
+}
+
+.rank-no {
+  width: 70rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+  color: #757575;
+}
+
+.rank-info {
+  flex: 1;
+}
+
+.rank-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.rank-meta {
+  font-size: 22rpx;
+  color: #bdbdbd;
+  margin-top: 4rpx;
+}
+
+.rank-points {
+  text-align: center;
+}
+
+.rank-points-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fb8c00;
+}
+
+.rank-points-label {
+  font-size: 20rpx;
+  color: #bdbdbd;
+}

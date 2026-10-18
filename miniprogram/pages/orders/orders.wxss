@@ -1,0 +1,40 @@
+.order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.order-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.order-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 0;
+  font-size: 26rpx;
+}
+
+.order-label {
+  color: #9e9e9e;
+}
+
+.order-value {
+  color: #333;
+  word-break: break-all;
+  text-align: right;
+}
+
+.voucher {
+  color: #43a047;
+  font-weight: 600;
+}
+
+.order-cancel {
+  text-align: right;
+  color: #e53935;
+  font-size: 26rpx;
+  margin-top: 16rpx;
+}

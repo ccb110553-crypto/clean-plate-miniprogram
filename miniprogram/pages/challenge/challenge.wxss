@@ -1,0 +1,72 @@
+.challenge-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.challenge-status {
+  font-size: 24rpx;
+  color: #9e9e9e;
+}
+
+.status-on {
+  color: #43a047;
+}
+
+.challenge-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.challenge-desc {
+  font-size: 26rpx;
+  color: #757575;
+  margin-bottom: 12rpx;
+}
+
+.challenge-time {
+  font-size: 24rpx;
+  color: #bdbdbd;
+  margin-bottom: 20rpx;
+}
+
+.challenge-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.join-btn,
+.rank-btn {
+  flex: 1;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  line-height: 72rpx;
+  height: 72rpx;
+  margin: 0;
+}
+
+.join-btn {
+  background: #43a047;
+  color: #fff;
+}
+
+.join-btn::after {
+  border: none;
+}
+
+.join-btn[disabled] {
+  background: #e0e0e0;
+  color: #fff;
+}
+
+.rank-btn {
+  background: #fff;
+  color: #43a047;
+  border: 2rpx solid #43a047;
+}
+
+.rank-btn::after {
+  border: none;
+}

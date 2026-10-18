@@ -1,0 +1,36 @@
+<view class="container">
+  <!-- 餐次切换 -->
+  <view class="meal-tabs">
+    <view
+      wx:for="{{mealTypes}}"
+      wx:key="key"
+      class="meal-tab {{activeType === item.key ? 'active' : ''}}"
+      bindtap="switchType"
+      data-type="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="date-tip">📅 {{date}}</view>
+
+  <view wx:if="{{groupList.length === 0}}" class="empty">暂无该餐次菜单</view>
+
+  <!-- 分类分组卡片 -->
+  <view wx:for="{{groupList}}" wx:key="category" class="cat-block">
+    <view class="cat-title">{{item.category}}</view>
+    <view class="dish-grid">
+      <view
+        wx:for="{{item.items}}"
+        wx:for-item="dish"
+        wx:key="id"
+        class="dish-card"
+        bindtap="preview"
+        data-url="{{dish.image}}"
+        data-name="{{dish.dishName}}"
+      >
+        <image src="{{dish.image}}" mode="aspectFill" class="dish-img" />
+        <view class="dish-name">{{dish.dishName}}</view>
+        <view class="dish-price">¥{{dish.price}}</view>
+      </view>
+    </view>
+  </view>
+</view>

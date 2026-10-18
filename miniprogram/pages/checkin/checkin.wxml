@@ -1,0 +1,71 @@
+<view class="container">
+  <!-- 步骤1：选择菜品 -->
+  <view class="card">
+    <view class="card-title">① 选择今天吃的菜品</view>
+    <scroll-view scroll-x class="menu-scroll" wx:if="{{menus.length > 0}}">
+      <view class="menu-scroll-inner">
+        <view
+          wx:for="{{menus}}"
+          wx:key="id"
+          class="menu-select {{selectedMenuId === item.id ? 'selected' : ''}}"
+          bindtap="selectMenu"
+          data-id="{{item.id}}"
+        >
+          <image src="{{item.image}}" mode="aspectFill" class="menu-select-img" />
+          <view class="menu-select-name">{{item.dishName}}</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view wx:if="{{menus.length === 0}}" class="empty">菜品加载中...</view>
+  </view>
+
+  <!-- 步骤2：拍摄餐盘 -->
+  <view class="card">
+    <view class="card-title">② 拍摄吃完后的餐盘照片</view>
+    <view class="upload-box" bindtap="chooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFill" class="preview-img" />
+      <view wx:else class="upload-placeholder">
+        <view class="upload-icon">📷</view>
+        <view class="upload-text">点击拍照或从相册选择</view>
+        <view class="upload-sub">请拍摄用餐后的餐盘</view>
+      </view>
+    </view>
+    <button class="btn-primary" bindtap="submit" loading="{{submitting}}" disabled="{{submitting || result}}">
+      {{result ? '已提交' : '提交打卡'}}
+    </button>
+  </view>
+
+  <!-- 提交结果 -->
+  <view class="card" wx:if="{{result}}">
+    <view class="card-title">提交结果</view>
+    <view class="result-tip">✅ 打卡已提交，等待管理员审核</view>
+
+    <view wx:if="{{result.checkin.menu}}" class="matched-dish">
+      <image src="{{result.checkin.menu.image}}" mode="aspectFill" class="matched-img" />
+      <view class="matched-info">
+        <view class="matched-label">关联菜品</view>
+        <view class="matched-name">{{result.checkin.menu.dishName}}</view>
+      </view>
+    </view>
+
+    <view class="ai-box" wx:if="{{result.aiPreview}}">
+      <view class="ai-title">AI 预判参考</view>
+      <view class="ai-row">
+        <text class="ai-label">判定结果</text>
+        <text class="tag {{result.aiPreview.label === 'empty' ? 'tag-green' : 'tag-red'}}">
+          {{result.aiPreview.label === 'empty' ? '疑似光盘' : '疑似未光盘'}}
+        </text>
+      </view>
+      <view class="ai-row">
+        <text class="ai-label">置信度</text>
+        <text class="ai-value">{{result.aiPreview.score * 100}}%</text>
+      </view>
+      <view class="ai-note">* AI 预判仅供参考，最终以管理员人工审核为准</view>
+    </view>
+
+    <view class="btn-row">
+      <button class="btn-secondary" bindtap="backHome">返回首页</button>
+      <button class="btn-primary" bindtap="goRecords">查看记录</button>
+    </view>
+  </view>
+</view>

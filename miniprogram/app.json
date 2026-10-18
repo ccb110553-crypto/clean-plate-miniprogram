@@ -1,0 +1,34 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/login",
+    "pages/challenge/challenge",
+    "pages/shop/shop",
+    "pages/mine/mine",
+    "pages/checkin/checkin",
+    "pages/records/records",
+    "pages/orders/orders",
+    "pages/ranking/ranking",
+    "pages/recipe/recipe",
+    "pages/menu/menu"
+  ],
+  "window": {
+    "navigationBarTitleText": "光盘行动",
+    "navigationBarBackgroundColor": "#43a047",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f6f8"
+  },
+  "tabBar": {
+    "color": "#9e9e9e",
+    "selectedColor": "#43a047",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/challenge/challenge", "text": "挑战" },
+      { "pagePath": "pages/shop/shop", "text": "商城" },
+      { "pagePath": "pages/mine/mine", "text": "我的" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json"
+}

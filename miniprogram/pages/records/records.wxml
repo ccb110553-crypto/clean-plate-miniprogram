@@ -1,0 +1,30 @@
+<view class="container">
+  <view wx:if="{{list.length === 0 && !loading}}" class="empty">还没有打卡记录，快去打卡吧～</view>
+
+  <view wx:for="{{list}}" wx:key="id" class="card record-item">
+    <view class="record-head">
+      <text class="record-date">{{item.checkinDate}}</text>
+      <text class="tag {{statusMap(item.status) === '待审核' ? 'tag-orange' : statusMap(item.status) === '已通过' ? 'tag-green' : 'tag-red'}}">{{statusMap(item.status)}}</text>
+    </view>
+
+    <!-- 关联菜品 -->
+    <view wx:if="{{item.menu}}" class="record-menu">
+      <image src="{{item.menu.image}}" mode="aspectFill" class="record-menu-img" />
+      <view class="record-menu-info">
+        <view class="record-menu-label">关联菜品</view>
+        <view class="record-menu-name">{{item.menu.dishName}}</view>
+      </view>
+    </view>
+
+    <image src="{{item.imageUrl}}" mode="aspectFill" class="record-img" />
+    <view class="record-foot">
+      <view wx:if="{{item.status === 'approved'}}" class="points">+{{item.pointsAwarded}} 积分</view>
+      <view wx:if="{{item.status === 'rejected'}}" class="reject-reason">驳回原因：{{item.rejectReason}}</view>
+      <view wx:if="{{item.aiLabel}}" class="ai-tag">
+        AI: {{item.aiLabel === 'empty' ? '疑似光盘' : '疑似未光盘'}} ({{item.aiScore * 100}}%)
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="empty">加载中...</view>
+</view>

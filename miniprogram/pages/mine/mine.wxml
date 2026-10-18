@@ -1,0 +1,38 @@
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="profile card">
+    <view class="avatar">{{userInfo.nickname ? userInfo.nickname[0] : '光'}}</view>
+    <view class="profile-info">
+      <view class="profile-name">{{userInfo.nickname || userInfo.username}}</view>
+      <view class="profile-meta">{{userInfo.studentNo || ''}} {{userInfo.className || ''}}</view>
+      <view class="profile-meta" wx:if="{{userInfo.dormitory}}">宿舍：{{userInfo.dormitory}}</view>
+    </view>
+  </view>
+
+  <!-- 积分 -->
+  <view class="points-card card">
+    <view class="points-item">
+      <view class="points-num">{{points.balancePoints}}</view>
+      <view class="points-label">可用积分</view>
+    </view>
+    <view class="points-divider"></view>
+    <view class="points-item">
+      <view class="points-num">{{points.totalPoints}}</view>
+      <view class="points-label">累计积分</view>
+    </view>
+  </view>
+
+  <!-- 功能列表 -->
+  <view class="card menu-list">
+    <view class="menu-row" bindtap="goRecords">
+      <text>📋 我的打卡记录</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="goOrders">
+      <text>🎫 我的兑换记录</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <button class="logout-btn" bindtap="logout">退出登录</button>
+</view>

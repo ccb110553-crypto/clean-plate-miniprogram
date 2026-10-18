@@ -1,0 +1,29 @@
+<view class="container">
+  <view wx:if="{{list.length === 0}}" class="empty">暂无兑换记录</view>
+
+  <view wx:for="{{list}}" wx:key="id" class="card order-item">
+    <view class="order-head">
+      <text class="order-name">{{item.productName}}</text>
+      <text class="tag {{item.status === 'fulfilled' ? 'tag-green' : item.status === 'pending' ? 'tag-orange' : 'tag-gray'}}">{{statusMap(item.status)}}</text>
+    </view>
+    <view class="order-body">
+      <view class="order-row">
+        <text class="order-label">订单号</text>
+        <text class="order-value">{{item.orderNo}}</text>
+      </view>
+      <view class="order-row">
+        <text class="order-label">消耗积分</text>
+        <text class="order-value points">{{item.pointsCost}}</text>
+      </view>
+      <view class="order-row" wx:if="{{item.voucherCode}}">
+        <text class="order-label">券码</text>
+        <text class="order-value voucher">{{item.voucherCode}}</text>
+      </view>
+      <view class="order-row">
+        <text class="order-label">时间</text>
+        <text class="order-value">{{item.created_at}}</text>
+      </view>
+    </view>
+    <view wx:if="{{item.status === 'pending'}}" class="order-cancel" bindtap="cancel" data-id="{{item.id}}">取消兑换</view>
+  </view>
+</view>

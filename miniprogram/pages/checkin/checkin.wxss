@@ -1,0 +1,158 @@
+.menu-scroll {
+  white-space: nowrap;
+}
+
+.menu-scroll-inner {
+  display: inline-flex;
+}
+
+.menu-select {
+  width: 140rpx;
+  margin-right: 16rpx;
+  border: 3rpx solid transparent;
+  border-radius: 12rpx;
+  overflow: hidden;
+  background: #fafafa;
+  text-align: center;
+}
+
+.menu-select.selected {
+  border-color: #43a047;
+  background: #e8f5e9;
+}
+
+.menu-select-img {
+  width: 140rpx;
+  height: 110rpx;
+  display: block;
+}
+
+.menu-select-name {
+  font-size: 22rpx;
+  padding: 8rpx 4rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-box {
+  border: 2rpx dashed #c8e6c9;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 28rpx;
+}
+
+.preview-img {
+  width: 100%;
+  height: 480rpx;
+  display: block;
+}
+
+.upload-placeholder {
+  padding: 100rpx 0;
+  text-align: center;
+  color: #9e9e9e;
+}
+
+.upload-icon {
+  font-size: 80rpx;
+}
+
+.upload-text {
+  font-size: 30rpx;
+  margin-top: 16rpx;
+  color: #555;
+}
+
+.upload-sub {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+
+.result-tip {
+  font-size: 30rpx;
+  color: #43a047;
+  margin-bottom: 20rpx;
+}
+
+.matched-dish {
+  display: flex;
+  align-items: center;
+  background: #f5f6f8;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.matched-img {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 10rpx;
+  margin-right: 16rpx;
+}
+
+.matched-label {
+  font-size: 22rpx;
+  color: #9e9e9e;
+}
+
+.matched-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-top: 4rpx;
+}
+
+.ai-box {
+  background: #f9fbe7;
+  border-radius: 12rpx;
+  padding: 24rpx;
+}
+
+.ai-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.ai-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10rpx 0;
+  font-size: 26rpx;
+}
+
+.ai-label {
+  color: #757575;
+}
+
+.ai-value {
+  color: #333;
+  font-weight: 600;
+}
+
+.ai-note {
+  font-size: 22rpx;
+  color: #bdbdbd;
+  margin-top: 16rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 28rpx;
+}
+
+.btn-row .btn-primary,
+.btn-row .btn-secondary {
+  flex: 1;
+}
+
+.btn-secondary {
+  background: #fff;
+  color: #43a047;
+  border: 2rpx solid #43a047;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  line-height: 84rpx;
+  height: 88rpx;
+}

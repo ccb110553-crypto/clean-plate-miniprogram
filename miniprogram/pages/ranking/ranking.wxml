@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="rank-header card">
+    <view class="rank-title">{{challenge ? challenge.title : ''}}</view>
+    <view class="rank-sub">{{typeText}}榜单 · 实时更新</view>
+  </view>
+
+  <view wx:if="{{list.length === 0}}" class="empty">暂无排名数据，快去打卡吧</view>
+
+  <view wx:for="{{list}}" wx:key="index" class="card rank-item {{index < 3 ? 'top3' : ''}}">
+    <view class="rank-no">{{medal(index)}}</view>
+    <view class="rank-info">
+      <view class="rank-name">{{nameOf(item)}}</view>
+      <view class="rank-meta" wx:if="{{item.className}}">{{item.className}} · 打卡{{item.times}}次</view>
+      <view class="rank-meta" wx:if="{{item.members}}">成员 {{item.members}} 人 · 打卡 {{item.times}} 次</view>
+    </view>
+    <view class="rank-points">
+      <view class="rank-points-num">{{item.totalPoints}}</view>
+      <view class="rank-points-label">积分</view>
+    </view>
+  </view>
+</view>

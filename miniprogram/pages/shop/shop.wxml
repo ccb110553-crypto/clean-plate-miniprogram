@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="points-bar">
+    <view class="points-bar-label">我的积分</view>
+    <view class="points-bar-num">{{points}}</view>
+    <view class="orders-link" bindtap="goOrders">我的兑换 ›</view>
+  </view>
+
+  <view wx:if="{{products.length === 0}}" class="empty">暂无商品</view>
+
+  <view wx:for="{{products}}" wx:key="id" class="card product-item">
+    <view class="product-main">
+      <view class="product-icon">{{item.type === 'voucher' ? '🎫' : '💝'}}</view>
+      <view class="product-info">
+        <view class="product-name">{{item.name}}</view>
+        <view class="product-desc">{{item.description}}</view>
+      </view>
+    </view>
+    <view class="product-foot">
+      <view class="product-cost"><text class="points">{{item.pointsCost}}</text> 积分</view>
+      <button class="exchange-btn" bindtap="exchange" data-id="{{item.id}}" data-cost="{{item.pointsCost}}" data-name="{{item.name}}">兑换</button>
+    </view>
+  </view>
+</view>
