@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光盘行动 · 餐食打卡积分系统 — API 文档</title>
+<style>
+  :root {
+    --bg: #f6f8fa;
+    --card: #ffffff;
+    --border: #d0d7de;
+    --text: #1f2328;
+    --muted: #57606a;
+    --link: #0969da;
+    --code-bg: #f6f8fa;
+    --green: #1a7f37;
+    --blue: #0969da;
+    --orange: #bc4c00;
+    --red: #cf222e;
+    --purple: #8250df;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+  }
+  .layout { display: flex; }
+  /* 侧边栏 */
+  nav.sidebar {
+    width: 280px;
+    min-width: 280px;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 24px 16px;
+  }
+  nav.sidebar h1 {
+    font-size: 16px;
+    margin: 0 0 4px;
+    color: #fff;
+    line-height: 1.4;
+  }
+  nav.sidebar .subtitle { font-size: 12px; color: #8b949e; margin-bottom: 20px; }
+  nav.sidebar a {
+    display: block;
+    color: #c9d1d9;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  nav.sidebar a:hover { background: #21262d; color: #fff; }
+  nav.sidebar .group {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #8b949e;
+    margin: 16px 0 4px;
+    padding-left: 8px;
+  }
+  /* 主内容 */
+  main {
+    flex: 1;
+    max-width: 960px;
+    padding: 32px 40px 80px;
+    min-width: 0;
+  }
+  h2 {
+    font-size: 22px;
+    margin: 40px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 17px; margin: 28px 0 10px; }
+  p { margin: 8px 0; }
+  code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 2px 5px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+  }
+  pre {
+    background: #0d1117;
+    color: #e6edf3;
+    border-radius: 8px;
+    padding: 14px 16px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; color: inherit; }
+  .endpoint {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+  .endpoint .head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .method {
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    color: #fff;
+    letter-spacing: .5px;
+  }
+  .method.get    { background: var(--green); }
+  .method.post   { background: var(--blue); }
+  .method.put    { background: var(--orange); }
+  .method.delete { background: var(--red); }
+  .path { font-family: Consolas, monospace; font-size: 14px; font-weight: 600; }
+  .auth-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid;
+    margin-left: auto;
+  }
+  .auth-tag.need  { color: var(--purple); border-color: var(--purple); }
+  .auth-tag.admin { color: var(--red); border-color: var(--red); }
+  .auth-tag.open  { color: var(--green); border-color: var(--green); }
+  .endpoint .body { padding: 12px 16px; }
+  .endpoint .body > p:first-child { margin-top: 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f6f8fa; font-weight: 600; }
+  .label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-right: 6px;
+    color: #fff;
+  }
+  .label.body   { background: var(--blue); }
+  .label.query  { background: var(--green); }
+  .label.path   { background: var(--orange); }
+  .label.field  { background: var(--purple); }
+  .required { color: var(--red); font-weight: 700; }
+  .optional { color: var(--muted); }
+  .note {
+    background: #ddf4ff;
+    border: 1px solid #54aeff66;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .toc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+  .toc-card a { color: var(--link); text-decoration: none; }
+  .toc-card a:hover { text-decoration: underline; }
+  @media (max-width: 800px) {
+    .layout { flex-direction: column; }
+    nav.sidebar { width: 100%; height: auto; position: static; }
+    main { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="sidebar">
+    <h1>光盘行动 · 餐食打卡积分系统</h1>
+    <div class="subtitle">RESTful API 文档</div>
+    <a href="#overview">概览</a>
+    <a href="#auth-section">认证与鉴权</a>
+    <div class="group">学生端</div>
+    <a href="#auth">认证接口</a>
+    <a href="#checkin">打卡</a>
+    <a href="#points">积分</a>
+    <a href="#shop">商城</a>
+    <a href="#challenge">挑战</a>
+    <a href="#canteen">食堂</a>
+    <div class="group">管理端</div>
+    <a href="#admin-checkin">打卡审核</a>
+    <a href="#admin-order">订单管理</a>
+    <a href="#admin-rule">规则配置</a>
+    <a href="#admin-user">用户管理</a>
+    <a href="#admin-dashboard">数据大屏</a>
+    <a href="#admin-menu">菜单管理</a>
+    <a href="#admin-challenge">挑战管理</a>
+    <a href="#admin-product">商品管理</a>
+    <a href="#admin-recipe">食谱管理</a>
+    <div class="group">参考</div>
+    <a href="#models">数据模型</a>
+    <a href="#ai">AI 识别</a>
+    <a href="#errors">错误码</a>
+  </nav>
+
+  <main>
+    <h1 style="margin-top:0">API 文档</h1>
+    <p>本系统为「光盘行动」餐食打卡积分系统，后端基于 <code>Node.js + Express + Sequelize</code> 构建，数据库为 MySQL 8.0。</p>
+
+    <div class="toc-card">
+      <strong>基础信息</strong>
+      <p style="margin:6px 0">
+        开发环境 Base URL：<code>http://localhost:3000/api</code><br>
+        生产环境 Base URL：<code>http://&lt;your-server&gt;:3000/api</code><br>
+        健康检查：<code>http://localhost:3000/health</code>（无 <code>/api</code> 前缀）<br>
+        静态资源：<code>/uploads/...</code>（餐盘照片、菜品图、商品图）
+      </p>
+    </div>
+
+    <h2 id="overview">概览</h2>
+    <h3>统一响应格式</h3>
+    <p>所有接口均返回 JSON，格式统一为：</p>
+    <pre><code>{
+  "code": 0,          // 0 表示成功，非 0 表示失败
+  "message": "success",
+  "data": { ... }     // 业务数据，失败时为 null
+}</code></pre>
+
+    <h3 id="auth-section">认证与鉴权</h3>
+    <p>除公开接口外，均需在请求头携带 JWT：</p>
+    <pre><code>Authorization: Bearer &lt;token&gt;</code></pre>
+    <p>JWT 载荷为 <code>{ id, role, username }</code>，其中 <code>role</code> 为 <code>student</code> 或 <code>admin</code>。管理端接口额外要求 <code>role === 'admin'</code>。</p>
+
+    <div class="note">
+      <strong>测试账号</strong>：管理员 <code>admin / admin123</code>，学生 <code>student1 ~ student5 / 123456</code>。
+    </div>
+
+    <!-- ============ 学生端 - 认证 ============ -->
+    <h2 id="auth">认证接口</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/auth/register</span><span class="auth-tag open">公开</span></div>
+      <div class="body">
+        <p>学生注册，成功后直接返回 token。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>username</td><td>string</td><td class="required">是</td><td>用户名（唯一）</td></tr>
+          <tr><td>password</td><td>string</td><td class="required">是</td><td>密码（至少 6 位）</td></tr>
+          <tr><td>nickname</td><td>string</td><td class="optional">否</td><td>昵称，默认等于用户名</td></tr>
+          <tr><td>studentNo</td><td>string</td><td class="optional">否</td><td>学号</td></tr>
+          <tr><td>className</td><td>string</td><td class="optional">否</td><td>班级</td></tr>
+          <tr><td>dormitory</td><td>string</td><td class="optional">否</td><td>宿舍</td></tr>
+        </table>
+        <p>响应：<code>data = { token, user }</code></p>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/auth/login</span><span class="auth-tag open">公开</span></div>
+      <div class="body">
+        <p>登录（学生 + 管理员通用）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>username</td><td>string</td><td class="required">是</td><td>用户名</td></tr>
+          <tr><td>password</td><td>string</td><td class="required">是</td><td>密码</td></tr>
+        </table>
+        <p>响应：<code>data = { token, user }</code></p>
+        <pre><code>// 响应示例
+{
+  "code": 0,
+  "message": "登录成功",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIs...",
+    "user": { "id": 1, "username": "student1", "role": "student", ... }
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/auth/me</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>获取当前登录用户信息（不含密码）。</p></div>
+    </div>
+
+    <!-- ============ 打卡 ============ -->
+    <h2 id="checkin">打卡</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/checkins</span><span class="auth-tag need">需登录</span></div>
+      <div class="body">
+        <p>提交光盘打卡（上传餐盘照片 + 选择菜品 + AI 预判 + 每日去重 + 防刷限次）。使用 <code>multipart/form-data</code>。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>image</td><td>file</td><td class="required">是</td><td>餐盘照片（仅图片，≤10MB）</td></tr>
+          <tr><td>menuId</td><td>number</td><td class="optional">否</td><td>关联菜品 ID</td></tr>
+          <tr><td>mealType</td><td>string</td><td class="optional">否</td><td>餐次：breakfast / lunch / dinner（默认 lunch）</td></tr>
+        </table>
+        <p>响应：<code>data = { checkin, aiPreview }</code>。仅当 AI 判为「干净(pass)」时自动通过并发放积分，否则进入人工审核。</p>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/checkins</span><span class="auth-tag need">需登录</span></div>
+      <div class="body">
+        <p>我的打卡记录（分页）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>page</td><td>number</td><td>页码，默认 1</td></tr>
+          <tr><td>pageSize</td><td>number</td><td>每页条数，默认 10</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/checkins/:id</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>打卡详情（仅本人）。</p></div>
+    </div>
+
+    <!-- ============ 积分 ============ -->
+    <h2 id="points">积分</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/points</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>我的积分概览。响应：<code>data = { balancePoints, totalPoints }</code>（可用余额 + 累计获得）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/points/logs</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>积分流水（分页）。query：<code>page</code>、<code>pageSize</code>。</p></div>
+    </div>
+
+    <!-- ============ 商城 ============ -->
+    <h2 id="shop">商城</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/products</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>商品列表（仅上架中，按积分价格升序）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/orders</span><span class="auth-tag need">需登录</span></div>
+      <div class="body">
+        <p>兑换下单（扣积分 + 扣库存 + 生成订单，事务保证原子性）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>productId</td><td>number</td><td class="required">是</td><td>商品 ID</td></tr>
+        </table>
+        <p>响应：<code>data = order</code>（含 <code>orderNo</code>、<code>pointsCost</code> 等）。</p>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/orders</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>我的订单（分页）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/orders/:id/cancel</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>取消订单（仅待处理状态可取消，退还积分）。</p></div>
+    </div>
+
+    <!-- ============ 挑战 ============ -->
+    <h2 id="challenge">挑战</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/challenges</span><span class="auth-tag open">公开</span></div>
+      <div class="body"><p>挑战活动列表。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/challenges/:id/join</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>报名参与挑战。个人挑战以个人为单位，班级/宿舍挑战以队伍为单位。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/challenges/:id/ranking</span><span class="auth-tag open">公开</span></div>
+      <div class="body"><p>实时榜单（按累计总积分排序，不受商城消费影响）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/challenges/:id/status</span><span class="auth-tag need">需登录</span></div>
+      <div class="body"><p>我的参与状态 + 排名数据。</p></div>
+    </div>
+
+    <!-- ============ 食堂 ============ -->
+    <h2 id="canteen">食堂</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/menus</span><span class="auth-tag open">公开</span></div>
+      <div class="body"><p>菜单列表（上架菜品）。query：<code>mealType</code> 按餐次筛选。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/recipes</span><span class="auth-tag open">公开</span></div>
+      <div class="body"><p>食谱推荐列表。</p></div>
+    </div>
+
+    <!-- ============ 管理端 - 打卡审核 ============ -->
+    <h2 id="admin-checkin">打卡审核（管理端）</h2>
+    <div class="note">以下接口均需登录且 <code>role = admin</code>。</div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/checkins</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>打卡列表（可按状态筛选，含用户信息）。query：<code>status</code>、<code>page</code>、<code>pageSize</code>。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/checkins/:id/review</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>审核打卡：通过发放积分 / 驳回说明原因，并自动收集误判样本。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>action</td><td>string</td><td class="required">是</td><td>approve（通过）| reject（驳回）</td></tr>
+          <tr><td>reason</td><td>string</td><td class="optional">否</td><td>驳回原因</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ 管理端 - 订单 ============ -->
+    <h2 id="admin-order">订单管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/orders</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>订单列表。query：<code>status</code>、<code>page</code>、<code>pageSize</code>。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/orders/:id/handle</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>处理订单：发放（生成券码）/ 取消（退还积分）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>action</td><td>string</td><td class="required">是</td><td>fulfill（发放）| cancel（取消）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============ 管理端 - 规则配置 ============ -->
+    <h2 id="admin-rule">规则配置（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/rule-configs</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>获取判定规则配置（返回 <code>key → value</code> 映射）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method put">PUT</span><span class="path">/api/admin/rule-configs</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>更新规则配置（实时生效）。Body 为键值对象，例如：</p>
+        <pre><code>{
+  "ai_enabled": "true",
+  "ai_threshold": "0.6",
+  "daily_checkin_limit": "1",
+  "points_per_checkin": "10",
+  "checkin_review_mode": "manual_with_ai"
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- ============ 管理端 - 用户 ============ -->
+    <h2 id="admin-user">用户管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/users</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>用户列表（不含密码）。query：<code>role</code>、<code>keyword</code>、<code>className</code>、<code>dormitory</code>、<code>page</code>、<code>pageSize</code>。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/user-filters</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>班级 / 宿舍筛选选项（去重）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/users/:id/toggle</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>启用 / 禁用用户。</p></div>
+    </div>
+
+    <!-- ============ 管理端 - 数据大屏 ============ -->
+    <h2 id="admin-dashboard">数据大屏（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/dashboard</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>数据大屏统计。响应字段：</p>
+        <pre><code>{
+  "totalStudents": 10,      // 学生总数
+  "todayCheckins": 3,       // 今日打卡数
+  "totalCheckins": 50,      // 累计打卡数
+  "approvedCheckins": 40,   // 通过数
+  "pendingCheckins": 5,     // 待审核数
+  "approveRate": 0.8,       // 通过率
+  "totalPointsAwarded": 400,// 累计发放积分
+  "wasteSaved": 6.0,        // 减少浪费估算（kg）
+  "trend": [...],           // 近 7 日趋势
+  "classStats": [...],      // 班级统计
+  "dormStats": [...],       // 宿舍楼统计
+  "topUsers": [...]         // 积分榜
+}</code></pre>
+      </div>
+    </div>
+
+    <!-- ============ 管理端 - 菜单 ============ -->
+    <h2 id="admin-menu">菜单管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/menus</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>菜单列表（含下架）。query：<code>mealType</code>、<code>status</code>。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/menus</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>上新菜品（multipart/form-data，带图片）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>mealType</td><td>string</td><td class="required">是</td><td>breakfast / lunch / dinner</td></tr>
+          <tr><td>dishName</td><td>string</td><td class="required">是</td><td>菜名</td></tr>
+          <tr><td>image</td><td>file</td><td class="optional">否</td><td>菜品图片</td></tr>
+          <tr><td>category</td><td>string</td><td class="optional">否</td><td>分类，默认「素菜」</td></tr>
+          <tr><td>price</td><td>number</td><td class="optional">否</td><td>价格</td></tr>
+          <tr><td>isSmall</td><td>0/1</td><td class="optional">否</td><td>是否小份</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method put">PUT</span><span class="path">/api/admin/menus/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>编辑菜品（部分字段可更新）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/menus/:id/toggle</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>上架 / 下架切换。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method delete">DELETE</span><span class="path">/api/admin/menus/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>删除菜品。</p></div>
+    </div>
+
+    <!-- ============ 管理端 - 挑战 ============ -->
+    <h2 id="admin-challenge">挑战管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/challenges</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>挑战列表。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/challenges</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>创建挑战。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>title</td><td>string</td><td class="required">是</td><td>挑战名称</td></tr>
+          <tr><td>type</td><td>string</td><td class="required">是</td><td>personal / class / dormitory</td></tr>
+          <tr><td>description</td><td>string</td><td class="optional">否</td><td>描述</td></tr>
+          <tr><td>startTime</td><td>datetime</td><td class="optional">否</td><td>开始时间</td></tr>
+          <tr><td>endTime</td><td>datetime</td><td class="optional">否</td><td>结束时间</td></tr>
+          <tr><td>status</td><td>string</td><td class="optional">否</td><td>draft / ongoing / finished</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method put">PUT</span><span class="path">/api/admin/challenges/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>编辑挑战。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method delete">DELETE</span><span class="path">/api/admin/challenges/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>删除挑战。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/challenges/:id/participants</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>查看报名情况（个人挑战返回报名者，班级/宿舍挑战返回队伍及成员）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/challenges/:id/participants/:participantId/toggle</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>切换报名记录能否参加（active / blocked）。</p></div>
+    </div>
+
+    <!-- ============ 管理端 - 商品 ============ -->
+    <h2 id="admin-product">商品管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/products</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>商品列表（含下架）。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/products</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>新增商品（multipart/form-data，带图片）。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>name</td><td>string</td><td class="required">是</td><td>商品名称</td></tr>
+          <tr><td>type</td><td>string</td><td class="required">是</td><td>voucher（代金券）| donation（公益捐赠）</td></tr>
+          <tr><td>pointsCost</td><td>number</td><td class="required">是</td><td>所需积分</td></tr>
+          <tr><td>stock</td><td>number</td><td class="optional">否</td><td>库存，默认 -1（不限）</td></tr>
+          <tr><td>description</td><td>string</td><td class="optional">否</td><td>描述</td></tr>
+          <tr><td>image</td><td>file</td><td class="optional">否</td><td>商品图</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method put">PUT</span><span class="path">/api/admin/products/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>编辑商品。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/products/:id/toggle</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>上架 / 下架切换。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method delete">DELETE</span><span class="path">/api/admin/products/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>删除商品。</p></div>
+    </div>
+
+    <!-- ============ 管理端 - 食谱 ============ -->
+    <h2 id="admin-recipe">食谱管理（管理端）</h2>
+
+    <div class="endpoint">
+      <div class="head"><span class="method get">GET</span><span class="path">/api/admin/recipes</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>食谱列表。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method post">POST</span><span class="path">/api/admin/recipes</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body">
+        <p>创建食谱方案。</p>
+        <table>
+          <tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr>
+          <tr><td>title</td><td>string</td><td class="required">是</td><td>方案名称</td></tr>
+          <tr><td>dishes</td><td>array/string</td><td class="required">是</td><td>搭配菜品（数组或逗号分隔字符串）</td></tr>
+          <tr><td>description</td><td>string</td><td class="optional">否</td><td>描述</td></tr>
+          <tr><td>pointsSaved</td><td>number</td><td class="optional">否</td><td>可节省积分</td></tr>
+          <tr><td>tags</td><td>string</td><td class="optional">否</td><td>标签</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method put">PUT</span><span class="path">/api/admin/recipes/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>编辑食谱。</p></div>
+    </div>
+
+    <div class="endpoint">
+      <div class="head"><span class="method delete">DELETE</span><span class="path">/api/admin/recipes/:id</span><span class="auth-tag admin">管理员</span></div>
+      <div class="body"><p>删除食谱。</p></div>
+    </div>
+
+    <!-- ============ 数据模型 ============ -->
+    <h2 id="models">数据模型</h2>
+    <p>共 11 张表，由 Sequelize ORM 定义，脚本见 <code>docs/schema.sql</code>。</p>
+
+    <h3>users（用户）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>id</td><td>int</td><td>主键</td></tr>
+      <tr><td>openid</td><td>string</td><td>微信 openid（可空）</td></tr>
+      <tr><td>username</td><td>string</td><td>用户名（唯一）</td></tr>
+      <tr><td>password</td><td>string</td><td>密码（bcrypt 加密）</td></tr>
+      <tr><td>nickname / avatar</td><td>string</td><td>昵称 / 头像</td></tr>
+      <tr><td>role</td><td>enum</td><td>student / admin</td></tr>
+      <tr><td>studentNo</td><td>string</td><td>学号</td></tr>
+      <tr><td>className / dormitory</td><td>string</td><td>班级 / 宿舍</td></tr>
+      <tr><td>totalPoints</td><td>int</td><td>累计获得积分</td></tr>
+      <tr><td>balancePoints</td><td>int</td><td>可用积分余额</td></tr>
+      <tr><td>status</td><td>tinyint</td><td>1 正常 / 0 禁用</td></tr>
+    </table>
+
+    <h3>checkins（打卡记录）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>id</td><td>int</td><td>主键</td></tr>
+      <tr><td>userId / menuId</td><td>int</td><td>用户 / 关联菜品</td></tr>
+      <tr><td>imageUrl</td><td>string</td><td>餐盘照片路径</td></tr>
+      <tr><td>status</td><td>enum</td><td>pending / approved / rejected</td></tr>
+      <tr><td>aiScore / aiLabel / aiResult</td><td>-</td><td>AI 预判置信度 / 标签 / 完整结果</td></tr>
+      <tr><td>rejectReason</td><td>string</td><td>驳回原因</td></tr>
+      <tr><td>pointsAwarded</td><td>int</td><td>发放积分</td></tr>
+      <tr><td>reviewerId / reviewedAt</td><td>-</td><td>审核人 / 审核时间</td></tr>
+      <tr><td>checkinDate / mealType</td><td>-</td><td>打卡日期 / 餐次</td></tr>
+    </table>
+
+    <h3>points_logs（积分流水）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>userId</td><td>int</td><td>用户</td></tr>
+      <tr><td>changeType</td><td>enum</td><td>earn（获得）/ spend（消费）</td></tr>
+      <tr><td>points</td><td>int</td><td>变动积分</td></tr>
+      <tr><td>balanceAfter</td><td>int</td><td>变动后余额</td></tr>
+      <tr><td>source</td><td>string</td><td>来源：checkin / exchange</td></tr>
+      <tr><td>refId / remark</td><td>-</td><td>关联记录 / 备注</td></tr>
+    </table>
+
+    <h3>products（商品）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>name</td><td>string</td><td>商品名称</td></tr>
+      <tr><td>type</td><td>enum</td><td>voucher（代金券）/ donation（公益捐赠）</td></tr>
+      <tr><td>pointsCost</td><td>int</td><td>所需积分</td></tr>
+      <tr><td>stock</td><td>int</td><td>库存，-1 不限</td></tr>
+      <tr><td>status</td><td>tinyint</td><td>1 上架 / 0 下架</td></tr>
+    </table>
+
+    <h3>orders（订单）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>orderNo</td><td>string</td><td>订单号（唯一）</td></tr>
+      <tr><td>productId / userId</td><td>int</td><td>商品 / 用户</td></tr>
+      <tr><td>productName / pointsCost</td><td>-</td><td>商品名快照 / 积分价格</td></tr>
+      <tr><td>status</td><td>enum</td><td>pending / fulfilled / cancelled</td></tr>
+      <tr><td>voucherCode</td><td>string</td><td>发放的券码</td></tr>
+      <tr><td>adminId / handledAt</td><td>-</td><td>处理人 / 处理时间</td></tr>
+    </table>
+
+    <h3>challenges / challenge_participants（挑战 / 报名）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>title</td><td>string</td><td>挑战名称</td></tr>
+      <tr><td>type</td><td>enum</td><td>personal / class / dormitory</td></tr>
+      <tr><td>startTime / endTime</td><td>datetime</td><td>起止时间</td></tr>
+      <tr><td>status</td><td>enum</td><td>draft / ongoing / finished（报名表为 active / blocked）</td></tr>
+      <tr><td>groupKey / groupName</td><td>string</td><td>班级或宿舍队伍标识 / 名称</td></tr>
+    </table>
+
+    <h3>menus / recipes（菜单 / 食谱）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>menuDate / week</td><td>-</td><td>菜单日期 / 周次</td></tr>
+      <tr><td>mealType</td><td>enum</td><td>breakfast / lunch / dinner</td></tr>
+      <tr><td>dishName / category / price / isSmall</td><td>-</td><td>菜名 / 分类 / 价格 / 是否小份</td></tr>
+      <tr><td>title / description / dishes / tags</td><td>-</td><td>食谱：名称 / 描述 / 菜品数组 / 标签</td></tr>
+    </table>
+
+    <h3>rule_configs / misjudge_samples（规则配置 / 误判样本）</h3>
+    <table>
+      <tr><th>字段</th><th>类型</th><th>说明</th></tr>
+      <tr><td>cfgKey / cfgValue / description</td><td>-</td><td>规则键 / 值 / 描述</td></tr>
+      <tr><td>checkinId / imageUrl</td><td>-</td><td>误判样本关联打卡 / 图片</td></tr>
+      <tr><td>aiResult / humanResult / isMisjudge</td><td>-</td><td>AI 结果 / 人工结果 / 是否误判</td></tr>
+    </table>
+
+    <!-- ============ AI 识别 ============ -->
+    <h2 id="ai">AI 识别</h2>
+    <p>餐盘剩余量 AI 预判采用<strong>三级降级策略</strong>（<code>server/src/services/aiService.js</code>）：</p>
+    <table>
+      <tr><th>优先级</th><th>方案</th><th>说明</th></tr>
+      <tr><td>①</td><td>百度 EasyDL 自训练三分类模型</td><td>配置 <code>BAIDU_MODEL_ID</code> 后启用，最准</td></tr>
+      <tr><td>②</td><td>百度通用物体和场景识别（advanced_general）</td><td>次级方案</td></tr>
+      <tr><td>③</td><td>本地 sharp 图像启发式算法</td><td>无外部依赖兜底</td></tr>
+    </table>
+    <p>统一返回 <code>{ score, label, features }</code>：</p>
+    <table>
+      <tr><th>label</th><th>含义</th><th>打卡流转</th></tr>
+      <tr><td><code>pass</code>（干净）</td><td>只剩一点或无残渣</td><td>✅ 自动通过，发放积分</td></tr>
+      <tr><td><code>review</code>（需要审核）</td><td>不确定</td><td>⏳ 进入人工审核</td></tr>
+      <tr><td><code>dirty</code>（不干净）</td><td>大量剩菜</td><td>⏳ 进入人工审核</td></tr>
+    </table>
+    <div class="note">EasyDL 模型类名需与 <code>aiService.js</code> 中 <code>EASYDL_CLASS_MAP</code> 一致：<code>干净</code>、<code>需要审核</code>、<code>不干净</code>。AI 预判失败不会阻塞打卡提交。</div>
+
+    <!-- ============ 错误码 ============ -->
+    <h2 id="errors">错误码</h2>
+    <table>
+      <tr><th>code</th><th>HTTP</th><th>说明</th></tr>
+      <tr><td>0</td><td>200</td><td>成功</td></tr>
+      <tr><td>1</td><td>200</td><td>业务失败（参数错误、状态不符等）</td></tr>
+      <tr><td>401</td><td>401</td><td>未登录 / token 无效或过期</td></tr>
+      <tr><td>403</td><td>403</td><td>无操作权限（非管理员）</td></tr>
+      <tr><td>404</td><td>404</td><td>资源不存在</td></tr>
+      <tr><td>500</td><td>500</td><td>服务器内部错误</td></tr>
+    </table>
+
+    <p style="margin-top:40px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);padding-top:12px">
+      光盘行动 · 餐食打卡积分系统 API 文档 · 由实际路由与控制器自动整理 · MIT License
+    </p>
+  </main>
+</div>
+</body>
+</html>
