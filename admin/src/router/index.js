@@ -12,6 +12,10 @@ const routes = [
       { path: 'orders', component: () => import('../views/Orders.vue'), meta: { title: '订单管理' } },
       { path: 'rules', component: () => import('../views/Rules.vue'), meta: { title: '规则配置' } },
       { path: 'users', component: () => import('../views/Users.vue'), meta: { title: '用户管理' } },
+      { path: 'menus', component: () => import('../views/Menus.vue'), meta: { title: '菜单管理' } },
+      { path: 'challenges', component: () => import('../views/Challenges.vue'), meta: { title: '挑战管理' } },
+      { path: 'products', component: () => import('../views/Products.vue'), meta: { title: '商品管理' } },
+      { path: 'recipes', component: () => import('../views/Recipes.vue'), meta: { title: '食谱管理' } },
     ],
   },
 ];

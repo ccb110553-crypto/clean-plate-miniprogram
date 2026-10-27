@@ -1,7 +1,7 @@
-// 后端地址：开发者工具中可用 localhost；真机预览请改为电脑局域网 IP
-const BASE_URL = 'http://localhost:3000/api';
+// 后端地址：云服务器公网 IP（走 Nginx 80 端口反向代理到后端）
+const BASE_URL = 'http://60.205.107.11/api';
 // 图片等静态资源基地址（不含 /api）
-const IMG_BASE = 'http://localhost:3000';
+const IMG_BASE = 'http://60.205.107.11';
 
 // 把后端返回的相对图片路径（如 /uploads/xxx.jpg）转为完整可访问地址
 function fullImage(url) {

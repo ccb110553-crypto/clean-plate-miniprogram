@@ -11,7 +11,9 @@ const { sequelize, User, PointsLog } = require('../models');
  */
 async function changePoints(userId, changeType, points, source, opts = {}) {
   if (!points || points <= 0) throw new Error('积分变动值必须为正数');
-  const result = await sequelize.transaction(async (t) => {
+  const { transaction, refId, remark } = opts;
+
+  const run = async (t) => {
     const user = await User.findByPk(userId, { transaction: t, lock: t.LOCK.UPDATE });
     if (!user) throw new Error('用户不存在');
 
@@ -30,13 +32,15 @@ async function changePoints(userId, changeType, points, source, opts = {}) {
       points,
       balanceAfter: user.balancePoints,
       source,
-      refId: opts.refId || null,
-      remark: opts.remark || null,
+      refId: refId || null,
+      remark: remark || null,
     }, { transaction: t });
 
     return { balanceAfter: user.balancePoints, log };
-  });
-  return result;
+  };
+
+  // 传入外部事务时复用，否则自开事务（保证可组合到更大事务中）
+  return transaction ? run(transaction) : sequelize.transaction(run);
 }
 
 module.exports = { changePoints };

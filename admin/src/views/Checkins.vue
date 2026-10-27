@@ -45,8 +45,8 @@
 
       <el-table-column label="AI 预判" width="130">
         <template #default="{ row }">
-          <span v-if="row.aiLabel" class="ai-tag" :class="row.aiLabel === 'empty' ? 'ai-empty' : 'ai-not'">
-            {{ row.aiLabel === 'empty' ? '疑似光盘' : '疑似未光盘' }}
+          <span v-if="row.aiLabel" class="ai-tag" :class="aiTagClass(row.aiLabel)">
+            {{ aiText(row.aiLabel) }}
           </span>
           <span v-else class="sub">未启用</span>
           <div class="sub" v-if="row.aiScore != null">
@@ -142,6 +142,14 @@ function statusText(s) {
   return { pending: '待审核', approved: '已通过', rejected: '已驳回' }[s] || s;
 }
 
+function aiText(label) {
+  return { pass: '干净（通过）', review: '需审核', dirty: '不干净' }[label] || label;
+}
+
+function aiTagClass(label) {
+  return { pass: 'ai-empty', review: 'ai-review', dirty: 'ai-not' }[label] || 'ai-not';
+}
+
 onMounted(() => load());
 </script>
 
@@ -160,6 +168,11 @@ onMounted(() => load());
 .ai-empty {
   background: #e8f5e9;
   color: #43a047;
+}
+
+.ai-review {
+  background: #fff3e0;
+  color: #fb8c00;
 }
 
 .ai-not {

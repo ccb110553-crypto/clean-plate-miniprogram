@@ -23,7 +23,14 @@ request.interceptors.response.use(
     return Promise.reject(body);
   },
   (err) => {
-    ElMessage.error(err.message || '网络异常，请检查后端服务');
+    if (err.response && err.response.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userInfo');
+      ElMessage.error('登录已过期，请重新登录');
+      router.push('/login');
+    } else {
+      ElMessage.error(err.message || '网络异常，请检查后端服务');
+    }
     return Promise.reject(err);
   }
 );

@@ -20,7 +20,10 @@ async function join(req, res) {
 
   if (challenge.type === 'personal') {
     const exists = await ChallengeParticipant.findOne({ where: { challengeId: id, userId: user.id } });
-    if (exists) return fail(res, '你已参与该挑战');
+    if (exists) {
+      if (exists.status === 'blocked') return fail(res, '你已被管理员禁止参加该活动');
+      return fail(res, '你已参与该挑战');
+    }
     await ChallengeParticipant.create({ challengeId: id, userId: user.id });
     return ok(res, null, '报名成功');
   }
@@ -30,14 +33,16 @@ async function join(req, res) {
   if (!groupKey) return fail(res, challenge.type === 'class' ? '请先在个人资料中完善班级信息' : '请先在个人资料中完善宿舍信息');
 
   const exists = await ChallengeParticipant.findOne({ where: { challengeId: id, groupKey } });
-  if (!exists) {
-    await ChallengeParticipant.create({
-      challengeId: id,
-      userId: user.id,
-      groupKey,
-      groupName: groupKey,
-    });
+  if (exists) {
+    if (exists.status === 'blocked') return fail(res, '你的队伍已被管理员禁止参加该活动');
+    return ok(res, null, '报名成功');
   }
+  await ChallengeParticipant.create({
+    challengeId: id,
+    userId: user.id,
+    groupKey,
+    groupName: groupKey,
+  });
   return ok(res, null, '报名成功');
 }
 
@@ -56,7 +61,7 @@ async function ranking(req, res) {
              (SELECT COUNT(*) FROM checkins c WHERE c.user_id = u.id AND c.status='approved') AS times
       FROM challenge_participants cp
       JOIN users u ON u.id = cp.user_id
-      WHERE cp.challenge_id = :id
+      WHERE cp.challenge_id = :id AND cp.status = 'active'
       ORDER BY u.total_points DESC, u.id ASC
       LIMIT 50`;
   } else if (challenge.type === 'class') {
@@ -65,7 +70,7 @@ async function ranking(req, res) {
       SELECT u.class_name AS name, SUM(u.total_points) AS totalPoints, COUNT(u.id) AS members
       FROM users u
       WHERE u.role='student' AND u.class_name IS NOT NULL AND u.class_name != ''
-        AND u.class_name IN (SELECT DISTINCT group_key FROM challenge_participants WHERE challenge_id = :id)
+        AND u.class_name IN (SELECT DISTINCT group_key FROM challenge_participants WHERE challenge_id = :id AND status='active')
       GROUP BY u.class_name
       ORDER BY totalPoints DESC
       LIMIT 50`;
@@ -75,7 +80,7 @@ async function ranking(req, res) {
       SELECT u.dormitory AS name, SUM(u.total_points) AS totalPoints, COUNT(u.id) AS members
       FROM users u
       WHERE u.role='student' AND u.dormitory IS NOT NULL AND u.dormitory != ''
-        AND u.dormitory IN (SELECT DISTINCT group_key FROM challenge_participants WHERE challenge_id = :id)
+        AND u.dormitory IN (SELECT DISTINCT group_key FROM challenge_participants WHERE challenge_id = :id AND status='active')
       GROUP BY u.dormitory
       ORDER BY totalPoints DESC
       LIMIT 50`;
@@ -94,10 +99,10 @@ async function myStatus(req, res) {
   const user = await User.findByPk(req.user.id);
   let joined = false;
   if (challenge.type === 'personal') {
-    joined = !!(await ChallengeParticipant.findOne({ where: { challengeId: id, userId: user.id } }));
+    joined = !!(await ChallengeParticipant.findOne({ where: { challengeId: id, userId: user.id, status: 'active' } }));
   } else {
     const groupKey = challenge.type === 'class' ? user.className : user.dormitory;
-    joined = !!(groupKey && await ChallengeParticipant.findOne({ where: { challengeId: id, groupKey } }));
+    joined = !!(groupKey && await ChallengeParticipant.findOne({ where: { challengeId: id, groupKey, status: 'active' } }));
   }
 
   let myPoints = 0;

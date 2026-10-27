@@ -27,6 +27,9 @@ Order.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
 Challenge.hasMany(ChallengeParticipant, { foreignKey: 'challenge_id', as: 'participants' });
 ChallengeParticipant.belongsTo(Challenge, { foreignKey: 'challenge_id', as: 'challenge' });
 
+User.hasMany(ChallengeParticipant, { foreignKey: 'user_id', as: 'challengeParticipants' });
+ChallengeParticipant.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+
 Menu.hasMany(Checkin, { foreignKey: 'menu_id', as: 'checkins' });
 Checkin.belongsTo(Menu, { foreignKey: 'menu_id', as: 'menu' });
 

@@ -3,7 +3,7 @@
  * 运行: npm run seed
  */
 const bcrypt = require('bcryptjs');
-const { sequelize, User, Menu, Recipe } = require('./src/models');
+const { sequelize, User, Menu, Recipe, Product, Challenge } = require('./src/models');
 const { localDate } = require('./src/utils/date');
 
 async function seed() {
@@ -76,6 +76,52 @@ async function seed() {
     await Recipe.findOrCreate({ where: { title: r.title }, defaults: r });
   }
   console.log('[√] 食谱推荐数据就绪');
+
+  // 5. 商城商品（代金券 + 公益捐赠）
+  const products = [
+    { name: '5 元代金券', type: 'voucher', description: '食堂通用 5 元代金券', pointsCost: 50, stock: 100 },
+    { name: '10 元代金券', type: 'voucher', description: '食堂通用 10 元代金券', pointsCost: 90, stock: 100 },
+    { name: '免费午餐券', type: 'voucher', description: '兑换一份免费午餐', pointsCost: 200, stock: 50 },
+    { name: '公益捐赠 - 爱心午餐', type: 'donation', description: '用积分捐赠一份爱心午餐给山区儿童', pointsCost: 100, stock: -1 },
+    { name: '公益捐赠 - 光盘公益金', type: 'donation', description: '积分折算为公益金，支持光盘行动宣传', pointsCost: 50, stock: -1 },
+  ];
+  for (const p of products) {
+    await Product.findOrCreate({ where: { name: p.name }, defaults: p });
+  }
+  console.log('[√] 商城商品数据就绪');
+
+  // 6. 挑战活动（个人 / 班级 / 宿舍）
+  const challengeCount = await Challenge.count();
+  if (challengeCount === 0) {
+    const now = new Date();
+    const start = new Date(now.getTime() - 24 * 3600 * 1000);
+    const end = new Date(now.getTime() + 6 * 24 * 3600 * 1000);
+    await Challenge.create({
+      title: '本周个人光盘挑战',
+      type: 'personal',
+      description: '一周内完成 3 次光盘打卡即可上榜',
+      startTime: start,
+      endTime: end,
+      status: 'ongoing',
+    });
+    await Challenge.create({
+      title: '班级光盘争霸赛',
+      type: 'class',
+      description: '班级累计光盘积分比拼',
+      startTime: start,
+      endTime: end,
+      status: 'ongoing',
+    });
+    await Challenge.create({
+      title: '宿舍光盘擂台赛',
+      type: 'dormitory',
+      description: '宿舍楼光盘积分比拼',
+      startTime: start,
+      endTime: end,
+      status: 'ongoing',
+    });
+    console.log('[√] 挑战活动数据就绪');
+  }
 
   console.log('\n初始化完成！');
   await sequelize.close();

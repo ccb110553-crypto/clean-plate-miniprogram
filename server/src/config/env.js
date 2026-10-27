@@ -18,5 +18,10 @@ module.exports = {
   ai: {
     enabled: process.env.AI_ENABLED === 'true',
     threshold: parseFloat(process.env.AI_THRESHOLD || '0.6'),
+    baidu: {
+      apiKey: process.env.BAIDU_API_KEY || '',
+      secretKey: process.env.BAIDU_SECRET_KEY || '',
+      modelId: process.env.BAIDU_MODEL_ID || '',
+    },
   },
 };

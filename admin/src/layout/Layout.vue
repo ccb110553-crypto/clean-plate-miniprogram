@@ -14,6 +14,10 @@
         <el-menu-item index="/orders">🎫 订单管理</el-menu-item>
         <el-menu-item index="/rules">⚙️ 规则配置</el-menu-item>
         <el-menu-item index="/users">👥 用户管理</el-menu-item>
+        <el-menu-item index="/menus">🍚 菜单管理</el-menu-item>
+        <el-menu-item index="/challenges">🏆 挑战管理</el-menu-item>
+        <el-menu-item index="/products">🛍️ 商品管理</el-menu-item>
+        <el-menu-item index="/recipes">🥗 食谱管理</el-menu-item>
       </el-menu>
     </el-aside>
 

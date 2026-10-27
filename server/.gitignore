@@ -1,3 +1,6 @@
 node_modules/
 .env
 *.log
+# 用户上传的打卡照片 / 商品图（运行时数据，不进仓库）
+uploads/plate-*
+uploads/products/*

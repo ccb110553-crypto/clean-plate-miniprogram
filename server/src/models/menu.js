@@ -11,6 +11,7 @@ const Menu = sequelize.define('Menu', {
   price: { type: DataTypes.DECIMAL(6, 2), allowNull: false, defaultValue: 0 },
   isSmall: { type: DataTypes.TINYINT, field: 'is_small', allowNull: false, defaultValue: 0 },
   image: { type: DataTypes.STRING(255), allowNull: true },
+  status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
 }, {
   tableName: 'menus',
   timestamps: true,

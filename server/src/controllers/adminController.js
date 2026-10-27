@@ -50,7 +50,7 @@ async function reviewCheckin(req, res) {
       reviewerId: req.user.id,
       reviewedAt: new Date(),
     });
-    humanResult = 'empty';
+    humanResult = 'pass';
   } else {
     await checkin.update({
       status: 'rejected',
@@ -58,11 +58,11 @@ async function reviewCheckin(req, res) {
       reviewerId: req.user.id,
       reviewedAt: new Date(),
     });
-    humanResult = 'not_empty';
+    humanResult = 'dirty';
   }
 
-  // 收集误判样本：AI 预判与人工结果不一致时记录
-  if (checkin.aiLabel) {
+  // 收集误判样本：AI 给出明确结论（非 review）却与人工结果不一致时记录
+  if (checkin.aiLabel && checkin.aiLabel !== 'review') {
     await MisjudgeSample.create({
       checkinId: checkin.id,
       imageUrl: checkin.imageUrl,
@@ -269,6 +269,85 @@ async function statsDashboard(req, res) {
   });
 }
 
+// ============ 菜单管理 ============
+
+const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'];
+
+// 管理端菜单列表（含下架，按餐次/编号排序）
+async function listAdminMenus(req, res) {
+  const { mealType, status } = req.query;
+  const where = {};
+  if (mealType) where.mealType = mealType;
+  if (status !== undefined && status !== '') where.status = parseInt(status);
+
+  const menus = await Menu.findAll({ where, order: [['mealType', 'ASC'], ['id', 'ASC']] });
+  return ok(res, menus);
+}
+
+// 上新菜品（带图片上传）
+async function createMenu(req, res) {
+  const { mealType, dishName, category, price, isSmall } = req.body;
+  if (!VALID_MEAL_TYPES.includes(mealType)) return fail(res, '餐次不合法');
+  if (!dishName) return fail(res, '请输入菜名');
+
+  const image = req.file ? '/uploads/dishes/' + req.file.filename : (req.body.image || null);
+  const menu = await Menu.create({
+    menuDate: localDate(),
+    week: 1,
+    mealType,
+    dishName,
+    category: category || '素菜',
+    price: price === undefined || price === '' ? 0 : parseFloat(price),
+    isSmall: isSmall === '1' || isSmall === 1 || isSmall === 'true' ? 1 : 0,
+    image,
+    status: 1,
+  });
+  return ok(res, menu, '上新成功');
+}
+
+// 编辑菜品
+async function updateMenu(req, res) {
+  const { id } = req.params;
+  const menu = await Menu.findByPk(id);
+  if (!menu) return fail(res, '菜品不存在', 1, 404);
+
+  const { mealType, dishName, category, price, isSmall } = req.body;
+  const patch = {};
+  if (mealType !== undefined) {
+    if (!VALID_MEAL_TYPES.includes(mealType)) return fail(res, '餐次不合法');
+    patch.mealType = mealType;
+  }
+  if (dishName !== undefined) patch.dishName = dishName;
+  if (category !== undefined) patch.category = category;
+  if (price !== undefined && price !== '') patch.price = parseFloat(price);
+  if (isSmall !== undefined) patch.isSmall = (isSmall === '1' || isSmall === 1 || isSmall === 'true') ? 1 : 0;
+  if (req.file) patch.image = '/uploads/dishes/' + req.file.filename;
+  else if (req.body.image !== undefined) patch.image = req.body.image;
+
+  await menu.update(patch);
+  return ok(res, menu, '已更新');
+}
+
+// 上架/下架切换
+async function toggleMenuStatus(req, res) {
+  const { id } = req.params;
+  const menu = await Menu.findByPk(id);
+  if (!menu) return fail(res, '菜品不存在', 1, 404);
+
+  const next = menu.status === 1 ? 0 : 1;
+  await menu.update({ status: next });
+  return ok(res, { id: menu.id, status: next }, next === 1 ? '已上架' : '已下架');
+}
+
+// 删除菜品
+async function deleteMenu(req, res) {
+  const { id } = req.params;
+  const menu = await Menu.findByPk(id);
+  if (!menu) return fail(res, '菜品不存在', 1, 404);
+  await menu.destroy();
+  return ok(res, null, '已删除');
+}
+
 module.exports = {
   listCheckins,
   reviewCheckin,
@@ -280,4 +359,9 @@ module.exports = {
   toggleUserStatus,
   userFilters,
   statsDashboard,
+  listAdminMenus,
+  createMenu,
+  updateMenu,
+  toggleMenuStatus,
+  deleteMenu,
 };

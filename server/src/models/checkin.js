@@ -15,6 +15,7 @@ const Checkin = sequelize.define('Checkin', {
   reviewerId: { type: DataTypes.INTEGER.UNSIGNED, field: 'reviewer_id', allowNull: true },
   reviewedAt: { type: DataTypes.DATE, field: 'reviewed_at', allowNull: true },
   checkinDate: { type: DataTypes.DATEONLY, field: 'checkin_date', allowNull: false },
+  mealType: { type: DataTypes.ENUM('breakfast', 'lunch', 'dinner'), field: 'meal_type', allowNull: false, defaultValue: 'lunch' },
 }, {
   tableName: 'checkins',
   timestamps: true,

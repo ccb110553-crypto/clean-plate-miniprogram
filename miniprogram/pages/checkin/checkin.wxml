@@ -1,4 +1,15 @@
 <view class="container">
+  <!-- 餐次选择 -->
+  <view class="meal-tabs">
+    <view
+      wx:for="{{mealTypes}}"
+      wx:key="key"
+      class="meal-tab {{activeMealType === item.key ? 'active' : ''}}"
+      bindtap="switchMealType"
+      data-type="{{item.key}}"
+    >{{item.label}}</view>
+  </view>
+
   <!-- 步骤1：选择菜品 -->
   <view class="card">
     <view class="card-title">① 选择今天吃的菜品</view>
@@ -38,7 +49,7 @@
   <!-- 提交结果 -->
   <view class="card" wx:if="{{result}}">
     <view class="card-title">提交结果</view>
-    <view class="result-tip">✅ 打卡已提交，等待管理员审核</view>
+    <view class="result-tip">{{result.checkin.status === 'approved' ? '✅ 打卡通过，积分已发放' : '✅ 打卡已提交，等待管理员审核'}}</view>
 
     <view wx:if="{{result.checkin.menu}}" class="matched-dish">
       <image src="{{result.checkin.menu.image}}" mode="aspectFill" class="matched-img" />
@@ -52,8 +63,8 @@
       <view class="ai-title">AI 预判参考</view>
       <view class="ai-row">
         <text class="ai-label">判定结果</text>
-        <text class="tag {{result.aiPreview.label === 'empty' ? 'tag-green' : 'tag-red'}}">
-          {{result.aiPreview.label === 'empty' ? '疑似光盘' : '疑似未光盘'}}
+        <text class="tag {{result.aiPreview.label === 'pass' ? 'tag-green' : result.aiPreview.label === 'review' ? 'tag-orange' : 'tag-red'}}">
+          {{result.aiPreview.label === 'pass' ? '干净（通过）' : result.aiPreview.label === 'review' ? '需人工审核' : '不干净（未通过）'}}
         </text>
       </view>
       <view class="ai-row">

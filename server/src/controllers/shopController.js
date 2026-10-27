@@ -1,4 +1,5 @@
-const { Product, Order } = require('../models');
+const { Product, Order, sequelize } = require('../models');
+const { Op } = require('sequelize');
 const { ok, fail } = require('../utils/response');
 const { changePoints } = require('../services/pointsService');
 
@@ -11,7 +12,7 @@ async function listProducts(req, res) {
   return ok(res, products);
 }
 
-// 兑换下单（扣积分 + 生成订单）
+// 兑换下单（扣积分 + 扣库存 + 生成订单，事务保证原子性）
 async function createOrder(req, res) {
   const userId = req.user.id;
   const { productId } = req.body;
@@ -21,29 +22,36 @@ async function createOrder(req, res) {
   if (!product || product.status !== 1) return fail(res, '商品不存在或已下架');
   if (product.stock === 0) return fail(res, '商品库存不足');
 
-  // 扣积分（事务，余额不足会抛错）
+  const t = await sequelize.transaction();
   try {
-    await changePoints(userId, 'spend', product.pointsCost, 'exchange');
+    // 扣积分（余额不足会抛错）
+    await changePoints(userId, 'spend', product.pointsCost, 'exchange', { transaction: t });
+
+    // 扣库存（带条件防并发超卖）
+    if (product.stock > 0) {
+      const [affected] = await Product.update(
+        { stock: sequelize.literal('stock - 1') },
+        { where: { id: product.id, stock: { [Op.gt]: 0 } }, transaction: t }
+      );
+      if (affected === 0) throw new Error('商品库存不足');
+    }
+
+    const orderNo = 'CD' + Date.now() + String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+    const order = await Order.create({
+      orderNo,
+      userId,
+      productId,
+      productName: product.name,
+      pointsCost: product.pointsCost,
+      status: 'pending',
+    }, { transaction: t });
+
+    await t.commit();
+    return ok(res, order, '兑换成功，等待管理员发放');
   } catch (e) {
-    return fail(res, e.message);
+    await t.rollback();
+    return fail(res, e.message || '兑换失败');
   }
-
-  // 库存扣减
-  if (product.stock > 0) {
-    await product.update({ stock: product.stock - 1 });
-  }
-
-  const orderNo = 'CD' + Date.now() + String(Math.floor(Math.random() * 1000)).padStart(3, '0');
-  const order = await Order.create({
-    orderNo,
-    userId,
-    productId,
-    productName: product.name,
-    pointsCost: product.pointsCost,
-    status: 'pending',
-  });
-
-  return ok(res, order, '兑换成功，等待管理员发放');
 }
 
 // 我的订单

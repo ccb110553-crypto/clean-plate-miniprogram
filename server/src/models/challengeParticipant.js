@@ -7,6 +7,7 @@ const ChallengeParticipant = sequelize.define('ChallengeParticipant', {
   userId: { type: DataTypes.INTEGER.UNSIGNED, field: 'user_id', allowNull: true },
   groupKey: { type: DataTypes.STRING(64), field: 'group_key', allowNull: true },
   groupName: { type: DataTypes.STRING(64), field: 'group_name', allowNull: true },
+  status: { type: DataTypes.ENUM('active', 'blocked'), allowNull: false, defaultValue: 'active' },
 }, {
   tableName: 'challenge_participants',
   timestamps: true,

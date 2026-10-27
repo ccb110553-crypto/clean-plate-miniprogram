@@ -19,17 +19,14 @@ Page({
 
   async loadData() {
     try {
+      const today = this.todayStr();
       const [points, menus, records] = await Promise.all([
         get('/points'),
-        get('/menus?mealType=lunch'),
+        get(`/menus?mealType=lunch&date=${today}`),
         get('/checkins?page=1&pageSize=10'),
       ]);
-      const today = this.todayStr();
       const todayCheckin = records.list.find((c) => c.checkinDate === today) || null;
-      const todayMenus = menus
-        .filter((m) => m.menuDate === today)
-        .slice(0, 8)
-        .map((m) => ({ ...m, image: fullImage(m.image) }));
+      const todayMenus = menus.slice(0, 8).map((m) => ({ ...m, image: fullImage(m.image) }));
       this.setData({ points, menus: todayMenus, todayStatus: todayCheckin });
     } catch (e) {
       // 静默处理

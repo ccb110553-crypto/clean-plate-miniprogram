@@ -1,7 +1,15 @@
 const { upload, get, fullImage } = require('../../utils/request');
 
+const MEAL_TYPES = [
+  { key: 'breakfast', label: '早餐' },
+  { key: 'lunch', label: '午餐' },
+  { key: 'dinner', label: '晚餐' },
+];
+
 Page({
   data: {
+    mealTypes: MEAL_TYPES,
+    activeMealType: 'lunch',
     menus: [],
     selectedMenuId: null,
     imagePath: '',
@@ -13,11 +21,15 @@ Page({
     this.loadMenus();
   },
 
+  switchMealType(e) {
+    this.setData({ activeMealType: e.currentTarget.dataset.type, selectedMenuId: null }, () => this.loadMenus());
+  },
+
   async loadMenus() {
     try {
       const d = new Date();
       const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      const menus = await get(`/menus?mealType=lunch&date=${date}`);
+      const menus = await get(`/menus?mealType=${this.data.activeMealType}&date=${date}`);
       this.setData({ menus: menus.map((m) => ({ ...m, image: fullImage(m.image) })) });
     } catch (e) {
       // 静默处理
@@ -50,6 +62,7 @@ Page({
     try {
       const data = await upload('/checkins', this.data.imagePath, {
         menuId: String(this.data.selectedMenuId),
+        mealType: this.data.activeMealType,
       });
       // 关联菜品图片转完整 URL
       if (data.checkin && data.checkin.menu) {

@@ -2,17 +2,15 @@ const { Menu, Recipe } = require('../models');
 const { Op } = require('sequelize');
 const { ok } = require('../utils/response');
 
-// 菜单列表（可按日期/周次/餐次筛选）
+// 菜单列表（统一每日菜单：返回所有上架菜品，可按餐次筛选）
 async function listMenus(req, res) {
-  const { date, week, mealType } = req.query;
-  const where = {};
-  if (date) where.menuDate = date;
-  if (week) where.week = parseInt(week);
+  const { mealType } = req.query;
+  const where = { status: 1 };
   if (mealType) where.mealType = mealType;
 
   const menus = await Menu.findAll({
     where,
-    order: [['menuDate', 'ASC'], ['mealType', 'ASC'], ['id', 'ASC']],
+    order: [['mealType', 'ASC'], ['id', 'ASC']],
   });
   return ok(res, menus);
 }
